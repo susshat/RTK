@@ -9,6 +9,7 @@ const CreateUser = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     console.log(name, email, password, profileImage);
   };
 

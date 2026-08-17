@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import "../forms.css";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 const CreateProduct = () => {
   const [name, setName] = useState("");
@@ -7,9 +9,30 @@ const CreateProduct = () => {
   const [quantity, setQuantity] = useState("");
   const [isDamage, setIsDamage] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(name, price, quantity, isDamage);
+    const data = {
+      name: name,
+      price: price,
+      quantity: quantity,
+      isDamage: isDamage,
+    };
+
+    try {
+      const result = await axios({
+        url: "http://localhost:8000/product",
+        method: "post",
+        data: data,
+      });
+
+      toast.success(result.data.message);
+      setName("");
+      setPrice("");
+      setQuantity("");
+      setIsDamage(false);
+    } catch (error) {
+      toast.error(error.response.data.message);
+    }
   };
 
   return (
