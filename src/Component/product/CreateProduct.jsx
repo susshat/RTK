@@ -1,102 +1,104 @@
-import React, { useState } from "react";
-import "../forms.css";
+import { Form, Formik } from "formik";
+import * as yup from "yup";
+import React from "react";
+import FormikInput from "../formikComponents/learnFormik/FormikInput";
+import FormikCheckbox from "../formikComponents/learnFormik/FormikCheckbox";
+import FormikSelect from "../formikComponents/learnFormik/FormikSelect";
 import axios from "axios";
-import { toast } from "react-toastify";
 
 const CreateProduct = () => {
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [isDamage, setIsDamage] = useState(false);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const data = {
-      name: name,
-      price: price,
-      quantity: quantity,
-      isDamage: isDamage,
-    };
-
+  const initialValues = {
+    name: "",
+    quantity: 0,
+    price: 0,
+    featured: true,
+    productImage: "",
+    manufacturedDate: "",
+    company: "apple",
+  };
+  const onSubmit = async (value, other) => {
     try {
-      const result = await axios({
+      let result = await axios({
         url: "http://localhost:8000/product",
-        method: "post",
-        data: data,
+        method: "POST",
+        data: value,
       });
-
-      toast.success(result.data.message);
-      setName("");
-      setPrice("");
-      setQuantity("");
-      setIsDamage(false);
     } catch (error) {
-      toast.error(error.response.data.message);
+      console.log(error.message);
     }
   };
 
+  const validateSchema = yup.object({
+    name: yup.string().required("fullName is required"),
+    quantity: yup.number().required("quantity is required"),
+    price: yup.number().required("quantity is required"),
+    featured: yup.boolean().required("price is required"),
+    productImage: yup.string().required("productImage is required"),
+    manufacturedDate: yup.string().required("manufacturedDate is required"),
+    company: yup.string().required("company is required"),
+  });
+
+  const companyOptions = [
+    { label: "Select Company", value: "", disabled: true },
+    { label: "apple", value: "Apple" },
+    { label: "samsung", value: "Samsung" },
+    { label: "mi", value: "MI" },
+    { label: "gigabyte", value: "Gigabyte" },
+  ];
   return (
-    <div className="form-page">
-      <div className="form-card">
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="name" className="form-label">
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              className="form-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="price" className="form-label">
-              Price
-            </label>
-            <input
-              type="number"
-              id="price"
-              className="form-input"
-              value={price}
-              onChange={(e) => setPrice(e.target.value)}
-            />
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="quantity" className="form-label">
-              Quantity
-            </label>
-            <input
-              type="number"
-              id="quantity"
-              className="form-input"
-              value={quantity}
-              onChange={(e) => setQuantity(e.target.value)}
-            />
-          </div>
-
-          <div className="checkbox-group">
-            <label htmlFor="isDamage" className="form-label">
-              Is Damage
-            </label>
-            <input
-              type="checkbox"
-              id="isDamage"
-              className="form-checkbox"
-              checked={isDamage}
-              onChange={(e) => setIsDamage(e.target.checked)}
-            />
-          </div>
-
-          <button className="form-submit" type="submit">
-            Submit
-          </button>
-        </form>
-      </div>
-    </div>
+    <>
+      <Formik
+        initialValues={initialValues}
+        onSubmit={onSubmit}
+        validationSchema={validateSchema}
+      >
+        {(formik) => {
+          return (
+            <Form>
+              <FormikInput
+                name="name"
+                label="Name"
+                type="text"
+                required={true}
+              ></FormikInput>
+              <FormikInput
+                name="quantity"
+                label="Quantity"
+                type="number"
+                required={true}
+              ></FormikInput>
+              <FormikInput
+                name="price"
+                label="Price"
+                type="number"
+                required={true}
+              ></FormikInput>
+              <FormikCheckbox name="featured" label="Featured"></FormikCheckbox>
+              <FormikInput
+                name="productImage"
+                label="Product Image"
+                type="text"
+                required={true}
+              ></FormikInput>
+              <FormikInput
+                name="manufacturedDate"
+                label="Manufactured Date"
+                type="date"
+                required={true}
+              ></FormikInput>
+              <FormikSelect
+                name="company"
+                label="Company"
+                options={companyOptions}
+                required={true}
+              ></FormikSelect>
+              <br />
+              <button type="submit">Submit</button>
+            </Form>
+          );
+        }}
+      </Formik>
+    </>
   );
 };
 
