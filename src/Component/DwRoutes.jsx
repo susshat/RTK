@@ -2,6 +2,7 @@ import { Outlet, Route, Routes } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import CreateProduct from "./product/CreateProduct";
+import ReadAllProduct from "./product/ReadAllProduct";
 
 const DwRoutes = () => {
   return (
@@ -27,7 +28,7 @@ const DwRoutes = () => {
             }
           >
             <Route path=":id" element={<div>Show product details</div>}></Route>
-            <Route index element={<div>Show all products</div>}></Route>
+            <Route index element={<ReadAllProduct></ReadAllProduct>}></Route>
             <Route
               path="create"
               element={<CreateProduct></CreateProduct>}

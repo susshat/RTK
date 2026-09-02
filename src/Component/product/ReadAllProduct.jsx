@@ -1,62 +1,56 @@
-import React from "react";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 const ReadAllProduct = () => {
-  const products = [
-    {
-      id: "1",
-      name: "laptop",
-      price: "10000",
-      quantity: "10",
-      isDamage: false,
-    },
-    { id: "2", name: "mobile", price: "50000", quantity: "20", isDamage: true },
-    {
-      id: "3",
-      name: "tablet",
-      price: "100000",
-      quantity: "10",
-      isDamage: false,
-    },
-    { id: "4", name: "watch", price: "25000", quantity: "10", isDamage: false },
-  ];
-
+  const [products, setProducts] = useState([]);
+  const getProduct = async () => {
+    try {
+      const result = await axios({
+        url: "http://localhost:8000/product",
+        method: "GET",
+      });
+      setProducts(result.data.result);
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+  useEffect(() => {
+    getProduct();
+  }, []);
+  const handleDelete = (id) => {
+    return async () => {
+      try {
+        const result = await axios({
+          url: `http://localhost:8000/product/${id}`,
+          method: "delete",
+        });
+        toast.success("product deleted");
+        getProduct();
+      } catch (error) {
+        toast.error(error.message);
+      }
+    };
+  };
   return (
-    <div className="data-page">
-      <div className="data-header">
-        <span className="section-kicker">Inventory</span>
-        <h1>All Products</h1>
-      </div>
-
-      <div className="data-grid">
-        {products.map((item, i) => (
-          <div className="data-card" key={i}>
-            <div className="data-card-header">
-              <h2 className="data-title">{item.name}</h2>
-              <span
-                className={`status-badge ${item.isDamage ? "warning" : "good"}`}
-              >
-                {item.isDamage ? "Damaged" : "Healthy"}
-              </span>
-            </div>
-
-            <div className="data-list">
-              <div className="data-row">
-                <strong>Price</strong>
-                <span>Rs. {item.price}</span>
-              </div>
-              <div className="data-row">
-                <strong>Quantity</strong>
-                <span>{item.quantity}</span>
-              </div>
-              <div className="data-row">
-                <strong>Status</strong>
-                <span>{item.isDamage ? "Yes" : "No"}</span>
-              </div>
+    <>
+      {products.map((item, i) => {
+        return (
+          <div key={i} style={{ border: "solid grey 2px" }}>
+            <h1>{item.company}</h1>
+            <img src={item.productImage} alt="product img"></img>
+            <p>Name: {item.name}</p>
+            <p>Price: {item.price}</p>
+            <p>Featrued : {item.featured ? "yes" : "no"}</p>
+            <div>
+              <button>View</button>
+              <button>Update</button>
+              <button onClick={handleDelete(item.id)}>Delete</button>
             </div>
           </div>
-        ))}
-      </div>
-    </div>
+        );
+      })}
+    </>
   );
 };
 
