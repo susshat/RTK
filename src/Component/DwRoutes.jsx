@@ -3,6 +3,8 @@ import NavBar from "./NavBar";
 import Footer from "./Footer";
 import CreateProduct from "./product/CreateProduct";
 import ReadAllProduct from "./product/ReadAllProduct";
+import ReadSingleProduct from "./product/ReadSingleProduct";
+import UpdateProduct from "./product/UpdateProduct";
 
 const DwRoutes = () => {
   return (
@@ -27,7 +29,10 @@ const DwRoutes = () => {
               </div>
             }
           >
-            <Route path=":id" element={<div>Show product details</div>}></Route>
+            <Route
+              path=":id"
+              element={<ReadSingleProduct></ReadSingleProduct>}
+            ></Route>
             <Route index element={<ReadAllProduct></ReadAllProduct>}></Route>
             <Route
               path="create"
@@ -44,7 +49,7 @@ const DwRoutes = () => {
               <Route index element={<div>Update products</div>}></Route>
               <Route
                 path=":id"
-                element={<div>Form to update Products</div>}
+                element={<UpdateProduct></UpdateProduct>}
               ></Route>
             </Route>
           </Route>

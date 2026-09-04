@@ -5,8 +5,11 @@ import FormikInput from "../formikComponents/learnFormik/FormikInput";
 import FormikCheckbox from "../formikComponents/learnFormik/FormikCheckbox";
 import FormikSelect from "../formikComponents/learnFormik/FormikSelect";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const CreateProduct = () => {
+  const navigate = useNavigate();
   const initialValues = {
     name: "",
     quantity: 0,
@@ -23,6 +26,10 @@ const CreateProduct = () => {
         method: "POST",
         data: value,
       });
+      //http://localhost:3000/products/create/products
+
+      toast.success("Product created successfully.");
+      navigate("/products");
     } catch (error) {
       console.log(error.message);
     }

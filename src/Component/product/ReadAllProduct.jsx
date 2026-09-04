@@ -1,9 +1,12 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Swal from "sweetalert2";
 
 const ReadAllProduct = () => {
   const [products, setProducts] = useState([]);
+  const navigate = useNavigate();
   const getProduct = async () => {
     try {
       const result = await axios({
@@ -20,16 +23,52 @@ const ReadAllProduct = () => {
   }, []);
   const handleDelete = (id) => {
     return async () => {
-      try {
-        const result = await axios({
-          url: `http://localhost:8000/product/${id}`,
-          method: "delete",
-        });
-        toast.success("product deleted");
-        getProduct();
-      } catch (error) {
-        toast.error(error.message);
-      }
+      // try {
+      //   const result = await axios({
+      //     url: `http://localhost:8000/product/${id}`,
+      //     method: "delete",
+      //   });
+      //   toast.success("product deleted");
+      //   getProduct();
+      // } catch (error) {
+      //   toast.error(error.message);
+      // }
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async () => {
+        try {
+          const result = await axios({
+            url: `http://localhost:8000/product/${id}`,
+            method: "delete",
+          });
+          toast.success("product deleted");
+          getProduct();
+        } catch (error) {
+          toast.error(error.message);
+        }
+        // if (result.isConfirmed)
+        //   Swal.fire({
+        //     title: "Deleted!",
+        //     text: "Your file has been deleted.",
+        //     icon: "success",
+        //   });
+      });
+    };
+  };
+  const handleView = (id) => {
+    return () => {
+      navigate(`/products/${id}`);
+    };
+  };
+  const handleUpdate = (id) => {
+    return () => {
+      navigate(`/products/update/${id}`);
     };
   };
   return (
@@ -43,8 +82,8 @@ const ReadAllProduct = () => {
             <p>Price: {item.price}</p>
             <p>Featrued : {item.featured ? "yes" : "no"}</p>
             <div>
-              <button>View</button>
-              <button>Update</button>
+              <button onClick={handleView(item.id)}>View</button>
+              <button onClick={handleUpdate(item.id)}>Update</button>
               <button onClick={handleDelete(item.id)}>Delete</button>
             </div>
           </div>
